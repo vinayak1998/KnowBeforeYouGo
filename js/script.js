@@ -30,7 +30,16 @@ function loadData() {
     //appending the Right image to the page to the Right class with the Right url
     $body.append('<img class="bgimg" src=" ' + streetviewUrl  + ' ">');
 
-    //NY time ajax request goes here
+    //NY time ajax request goes here(the api key is personal)
+
+    //Steps: fire off ajax request
+    //then iterate through the response
+    //finally present the articles on the page inside <ul id="nytimes-articles"></ul>
+
+    var nytimesUrl = 'https://api.nytimes.com/svc/search/v2/articlesearch.json?q=' + cityStr + '&sort=newest&api-key=3582b1f2074f4f87bc2aac550c450274'
+
+    $getJSON();
+
     return false;
 };
 
