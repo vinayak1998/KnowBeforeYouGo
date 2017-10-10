@@ -36,11 +36,34 @@ function loadData() {
     //then iterate through the response
     //finally present the articles on the page inside <ul id="nytimes-articles"></ul>
 
-    var nytimesUrl = 'https://api.nytimes.com/svc/search/v2/articlesearch.json?q=' + cityStr + '&sort=newest&api-key=3582b1f2074f4f87bc2aac550c450274'
+    var nyTimesBaseUrl = 'http://api.nytimes.com/svc/search/v2/articlesearch';
+    var nyTimesApiKey = '07abd192a7c66b4fe1603702aa976a7f:17:71194010';
+    var nyTimesUrl = nyTimesBaseUrl + '.json?api-key=' + nyTimesApiKey + '&q=' + city;
 
-    $getJSON();
+    $.getJSON( nyTimesUrl, function( data ) {
+        var docs = data.response.docs;
+        $.each( docs, function( key, val ) {
+            var title = '<a href="' + val.web_url +'">' + val.headline.main + '</a>';
+
+            var leadParagraph = '';
+            if (val.lead_paragraph) {
+                leadParagraph = '<p>' + val.lead_paragraph + '</p>';
+            };
+
+            var listItem = '<li class="article">' + title + leadParagraph + '</li>';
+
+            $nytHeaderElem.text('New York Times Articles about ' + city);
+            $nytElem.append(listItem);
+        });
+    }).fail(function(){
+        $nytHeaderElem.text('New York Times Articles could not be loaded');
+    });
+
+
+
 
     return false;
+
 };
 
 //this loads the function loadData() when someone hits "submit"
