@@ -37,11 +37,16 @@ function loadData() {
     //finally present the articles on the page inside <ul id="nytimes-articles"></ul>
 
     var nyTimesBaseUrl = 'http://api.nytimes.com/svc/search/v2/articlesearch';
-    var nyTimesApiKey = '07abd192a7c66b4fe1603702aa976a7f:17:71194010';
-    var nyTimesUrl = nyTimesBaseUrl + '.json?api-key=' + nyTimesApiKey + '&q=' + city;
+    var nyTimesApiKey = '3582b1f2074f4f87bc2aac550c450274';
+    var nyTimesUrl = nyTimesBaseUrl + '.json?api-key=' + nyTimesApiKey + '&q=' + cityStr;
 
     $.getJSON( nyTimesUrl, function( data ) {
+        //this anonymous function data gets run as soon as we get the response back from the New York Times
+
         var docs = data.response.docs;
+
+        //iterate through the data object which is the actual response
+
         $.each( docs, function( key, val ) {
             var title = '<a href="' + val.web_url +'">' + val.headline.main + '</a>';
 
@@ -52,29 +57,53 @@ function loadData() {
 
             var listItem = '<li class="article">' + title + leadParagraph + '</li>';
 
-            $nytHeaderElem.text('New York Times Articles about ' + city);
+            $nytHeaderElem.text('New York Times Articles about ' + cityStr);
             $nytElem.append(listItem);
         });
-    }).fail(function(){
+    }).fail(function(){   //for error handling
         $nytHeaderElem.text('New York Times Articles could not be loaded');
     });
 
     // Wikipedia
+
+    //Main 3 steps
+    // fire off json-p request with $.ajax() (include dataType and success parameters)
+    // iterate through the response
+    // present articles on the page inside <ul id = "wikipedia-links"></ul>
+
     var wikiBaseUrl = 'http://en.wikipedia.org/w/api.php?format=json&action=opensearch&search=';
-    var wikiUrl = wikiBaseUrl + city;
+    var wikiUrl = wikiBaseUrl + cityStr;
+    // the above is simply a wikipedia url with a search string inside
+
+    //error handling
+    //thrown after 8 seconds have gone by
 
     var wikiRequestTimeout = setTimeout(function(){
         $wikiElem.text('Could not load wikipedia links');
     }, 8000);
 
+    // here we come to the ajax request object
     $.ajax({
+        //url parameter created and set equal to wiki url that was just created
+
         url: wikiUrl,
-        dataType: "jsonp",
+
+        dataType: "jsonp", //indicates that this is a jsonp request
+
+        //the success function
         success: function(data){
+
+            //this anonymous function is run when we get the response
+
             for (var i = 0; i <= data[1].length - 1; i++) {
                 var pageLink = '<li><a href="' + data[3][i] + '">' + data[1][i] + '</a></li>';
+
+                //append the articles on the page
+
                 $wikiElem.append(pageLink);
             };
+
+            //clear timeout added to clear the timer and not throw the error once this gets successful
 
             clearTimeout(wikiRequestTimeout);
         }
